@@ -2,26 +2,31 @@
 #include <stdlib.h>
 #include "raylib.h"
 
+// constants used to define the number of fonts, colours, messages displayed and max number of elements on the screen
 #define MAX_FONTS    8
 #define MAX_COLOURS  14
 #define MAX_MESSAGES 13
 #define MAX_HISTORY  3000
 
 typedef struct {
-    int     fontIdx;
-    int     msgIdx;
-    Vector2 pos;
-    float   angle;
-    float   size;
-    float   spacing;
-    Color   col;
+    int     fontIdx; // chosen font
+    int     msgIdx; // chosen message
+    Vector2 pos; // position
+    float   angle; // angle
+    float   size; // size of the font
+    float   spacing; // spacing of the font
+    Color   col; // colour of the font
 } Word;
 
 int main(void) {
+
+    // initialization of the window, the `0, 0` implies to be in full-screen, afterwards we set an fps target and
+    // generate a random seed
     InitWindow(0, 0, "asdSaver");
     SetTargetFPS(60);
     srand((unsigned)GetTime());
 
+    // loaded fonts, all are preinstalled with raylib
     Font fonts[MAX_FONTS] = { 0 };
         fonts[0] = LoadFont("resources/sprite_fonts/alagard.png");
         fonts[1] = LoadFont("resources/sprite_fonts/pixelplay.png");
@@ -32,34 +37,37 @@ int main(void) {
         fonts[6] = LoadFont("resources/sprite_fonts/alpha_beta.png");
         fonts[7] = LoadFont("resources/sprite_fonts/jupiter_crash.png");
 
+    // loaded messages, the repetition of 'asd' is to make sure that it has a higher chance to appear
     const char *messages[MAX_MESSAGES] = {
-                                            "ASD",
-                                            "asd",
-                                            "WEEEopen",
-                                            "lol",
-                                            "Debian",
-                                            "Arch",
-                                            "MaNgIaRo",
-                                            "ASD",
-                                            "asd",
+                                            "ASD", "asd", "WEEEopen",
+                                            "lol", "Debian", "Arch",
+                                            "MaNgIaRo", "ASD", "asd",
                                             "FULL BRIDGE RECTIFIER",
-                                            "MicroSLOP",
-                                            "ASD",
-                                            "asd"};
-    Color colors[MAX_COLOURS] = {
+                                            "MicroSLOP", "ASD", "asd"};
+
+    // loaded colours used, all aleady defined by raylib
+    Color colours[MAX_COLOURS] = {
         MAROON, ORANGE, DARKGREEN, DARKBLUE, DARKPURPLE, LIME,
         GOLD, RED, GREEN, BLUE, PURPLE, YELLOW, WHITE,  PINK
     };
 
+    // initialization of buffer for words and counter, time of the last drawn word and the counter origin point
     static Word history[MAX_HISTORY];
     int   historyCount = 0;
 
     double lastDraw  = GetTime();
     Vector2 origin = { 0, 0 };
 
+    // loop, it closes the windows if `Esc` or the close button is pressed
     while (!WindowShouldClose()) {
+
+        // it generates a random time to wait before printing a new word, it goes from 0 to 2 sec
+        // and then takes the new time time
         const double interval = ((double)(rand()%30))/10;
         double now = GetTime();
+
+        // if there is still space in the buffer it creates a new word using random values
+        // muduled on the max value of each field
         if (now - lastDraw >= interval && historyCount < MAX_HISTORY) {
             lastDraw = now;
             Word asd;
@@ -70,10 +78,11 @@ int main(void) {
             asd.angle   = (float)(rand() % 90) - 45.0f;
             asd.size    = (float)((rand() % 400) + 20) / 10.0f;
             asd.spacing = (float)(rand() % 7 + 1);
-            asd.col     = colors[rand() % MAX_COLOURS];
+            asd.col     = colours[rand() % MAX_COLOURS];
             history[historyCount++] = asd;
         }
 
+        // start to draw on a black screen the word with all the defined parameters
         BeginDrawing();
             ClearBackground(BLACK);
             for (int i = 0; i < historyCount; i++) {
@@ -83,12 +92,14 @@ int main(void) {
             }
         EndDrawing();
 
+        // in case we have filled the buffer, we set back the counter at 0 to restart and clean the screen
         if (historyCount == MAX_HISTORY) {
             historyCount = 0;
             ClearBackground(BLACK);
         }
     }
 
+    // unloading the used fonts to prevent memory leaks when the program terminates
     for (int i = 0; i < MAX_FONTS; i++) UnloadFont(fonts[i]);
     CloseWindow();
     return 0;
