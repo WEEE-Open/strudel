@@ -70,7 +70,7 @@ int main(void) {
 
         // it generates a random time to wait before printing a new word, it goes from 0 to 2 sec
         // and then takes the new time time
-        const double interval = ((double)(rand()%30))/10;
+        const double interval = ((double)(rand()%29) + 1.0)/10;
         double now = GetTime();
 
         // if there is still space in the buffer it creates a new word using random values
@@ -91,7 +91,7 @@ int main(void) {
 
         // start to draw on a black screen the word with all the defined parameters
         BeginDrawing();
-            // ClearBackground(BLACK);
+            ClearBackground(BLACK);
 
             Rectangle src = {0, 0, (float)background.width, (float)background.height};
             Rectangle dst = {0, 0, (float)GetScreenWidth(), (float)GetRenderHeight()};
