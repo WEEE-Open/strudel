@@ -26,6 +26,11 @@ int main(void) {
     SetTargetFPS(60);
     srand((unsigned)GetTime());
 
+    Image icon = LoadImage("images/icon.png");
+    Image bg = LoadImage("images/background.png");
+    SetWindowIcon(icon);
+    Texture2D background = LoadTextureFromImage(bg);
+
     // loaded fonts, all are preinstalled with raylib
     Font fonts[MAX_FONTS] = { 0 };
         fonts[0] = LoadFont("resources/sprite_fonts/alagard.png");
@@ -58,6 +63,8 @@ int main(void) {
     double lastDraw  = GetTime();
     Vector2 origin = { 0, 0 };
 
+    HideCursor();
+
     // loop, it closes the windows if `Esc` or the close button is pressed
     while (!WindowShouldClose()) {
 
@@ -84,7 +91,12 @@ int main(void) {
 
         // start to draw on a black screen the word with all the defined parameters
         BeginDrawing();
-            ClearBackground(BLACK);
+            // ClearBackground(BLACK);
+
+            Rectangle src = {0, 0, (float)background.width, (float)background.height};
+            Rectangle dst = {0, 0, (float)GetScreenWidth(), (float)GetRenderHeight()};
+            DrawTexturePro(background, src, dst, origin,0.0f, WHITE);
+
             for (int i = 0; i < historyCount; i++) {
                 Word *asd = &history[i];
                 DrawTextPro(fonts[asd->fontIdx], messages[asd->msgIdx],
@@ -95,12 +107,14 @@ int main(void) {
         // in case we have filled the buffer, we set back the counter at 0 to restart and clean the screen
         if (historyCount == MAX_HISTORY) {
             historyCount = 0;
-            ClearBackground(BLACK);
+            // ClearBackground(BLACK);
         }
     }
 
     // unloading the used fonts to prevent memory leaks when the program terminates
     for (int i = 0; i < MAX_FONTS; i++) UnloadFont(fonts[i]);
+    UnloadImage(icon);
+    UnloadImage(bg);
     CloseWindow();
     return 0;
 }
