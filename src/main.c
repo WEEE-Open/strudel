@@ -4,7 +4,7 @@
 #include <time.h>
 
 // constants used to define the number of fonts, colours, messages displayed and max number of elements on the screen
-#define MAX_FONTS    8
+#define MAX_FONTS    11
 #define MAX_COLOURS  14
 #define MAX_MESSAGES 13
 #define MAX_HISTORY  3000
@@ -67,6 +67,10 @@ int main(void) {
         fonts[5] = LoadFont("resources/sprite_fonts/pixantiqua.png");
         fonts[6] = LoadFont("resources/sprite_fonts/alpha_beta.png");
         fonts[7] = LoadFont("resources/sprite_fonts/jupiter_crash.png");
+        fonts[8] = LoadFontEx("resources/MapleMono.ttf", 32, 0, 250);
+        fonts[9] = LoadFontEx("resources/DotGothic16-Regular.ttf", 32, 0, 250);
+        fonts[10] = LoadFontEx("resources/KAISG.ttf", 32, 0, 250);
+
 
     // loaded messages, the repetition of 'asd' is to make sure that it has a higher chance to appear
     const char *messages[MAX_MESSAGES] = {
