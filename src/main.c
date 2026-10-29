@@ -22,22 +22,24 @@ typedef struct {
 // function to draw the time
 static void DrawClockOverlay(const char *time, const char *date, Font font) {
     const int fontSizeInternal = 110, fontSizeExternal = 145;
-    int tw = MeasureText(time, fontSizeInternal);
+    int tw = MeasureText(time, fontSizeExternal);
+    int dw = MeasureText(date, fontSizeExternal);
     int x = GetScreenWidth() / 2 - tw/2;
-    int y = GetScreenHeight() / 2;
+    int x2 = GetScreenWidth() / 2 - dw/2 + 40;
+    int y = GetScreenHeight() / 3 * 2;
 
 
     Vector2 posExt = {x, y}, origin = {0, 0}, posInt = {x+3, y + 17},
-        pos2Ext = {x-150, y + 120}, pos2Int = {x-145, y + 125};
+        pos2Ext = {x2, y + 120}, pos2Int = {x2+9, y + 145};
 
     Color colourExternal = GREEN, colourInternal = WHITE;
 
     SetTextLineSpacing(20);
     DrawTextPro(font, time, posExt, origin, 0.0, fontSizeExternal, 7, colourExternal);
-    DrawTextPro(font, date, pos2Ext, origin, 0.0, fontSizeExternal, 5, colourExternal);
+    DrawTextPro(font, date, pos2Ext, origin, 0.0, fontSizeExternal, 7, colourExternal);
     SetTextLineSpacing(35);
     DrawTextPro(font, time, posInt, origin, 0.0, fontSizeInternal, 20, colourInternal);
-    DrawTextPro(font, date, pos2Int, origin, 0.0, fontSizeInternal, 15, colourInternal);
+    DrawTextPro(font, date, pos2Int, origin, 0.0, fontSizeInternal, 25, colourInternal);
 }
 
 
@@ -45,7 +47,8 @@ int main(void) {
 
     // initialization of the window, the `0, 0` implies to be in full-screen,
     // afterwards we set an fps target and generate a random seed
-    InitWindow(0, 0, "asdSaver");
+    int testWidth = 1280, testHeight = 1024;
+    InitWindow(testWidth, testHeight, "asdSaver");
     SetTargetFPS(60);
     srand((unsigned)GetTime());
 
@@ -126,7 +129,7 @@ int main(void) {
             ClearBackground(BLACK);
 
             Rectangle src = {0, 0, (float)background.width, (float)background.height};
-            Rectangle dst = {0, 0, (float)GetScreenWidth(), (float)GetRenderHeight()};
+            Rectangle dst = {0, 0, /*(float)GetScreenWidth(), (float)GetRenderHeight()*/ (float)testWidth, (float)testHeight};
             DrawTexturePro(background, src, dst, origin,0.0f, WHITE);
 
             for (int i = 0; i < historyCount; i++) {
