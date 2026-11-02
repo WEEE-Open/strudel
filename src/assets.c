@@ -37,7 +37,7 @@ FontSet LoadFontSet() {
     fontSet.count = MAX_FONTS;
 
     for (int i = 0; i<MAX_FONTS; i++) {
-        fontSet.font[i] = LoadFontEx(FONT_PATHS[i], 64, NULL, 0);
+        fontSet.font[i] = LoadFont(FONT_PATHS[i]);
         if (!IsFontValid(fontSet.font[i])) {
             TraceLog(LOG_WARNING, "error: FAILED to load font n.%d: %s", &i, FONT_PATHS[i]);
         }
@@ -61,10 +61,10 @@ void DrawClockOverlay(Font font) {
     int tw = MeasureText(timeBuf, fontSizeExternal);
     int dw = MeasureText(dateBuf, fontSizeExternal);
     int x = GetScreenWidth() / 2 - tw/2;
-    int x2 = GetScreenWidth() / 2 - dw/2 + 40;
+    int x2 = GetScreenWidth() / 2 - dw/2;
     int y = GetScreenHeight() / 3 * 2;
     Vector2 posExt = {x, y}, origin = {0, 0}, posInt = {x+3, y + 17},
-        pos2Ext = {x2, y + 120}, pos2Int = {x2+9, y + 145};
+        pos2Ext = {x2, y + 120}, pos2Int = {x2+ 15, y + 145};
     Color colourExternal = GREEN, colourInternal = WHITE;
 
     SetTextLineSpacing(20);
