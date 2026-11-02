@@ -10,9 +10,12 @@
     #define MAX_MESSAGES 13
     #define MAX_HISTORY  3000
 
+
+    extern const Color COLOURS[MAX_COLOURS];
+
     typedef struct {
-        int     fontIdx; // chosen font
-        int     msgIdx; // chosen message
+        Font    font; // chosen font
+        char *  msg; // chosen message
         Vector2 pos; // position
         float   angle; // angle
         float   size; // size of the font
@@ -31,7 +34,9 @@
     // drawing and operational functions
     void DrawClockOverlay(Font font);
 
-    // unloading functions
+    // generate a Word
+    Word generateWord(FontSet *fontSet);
+
     void UnloadFontSet(FontSet *fontSet);
 
 

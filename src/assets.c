@@ -1,6 +1,15 @@
 #include "assets.h"
+#include <stdlib.h>
 #include <raylib.h>
 #include <time.h>
+
+static char *generateMessage();
+
+
+const Color COLOURS[MAX_COLOURS] = {
+        MAROON, ORANGE, DARKGREEN, DARKBLUE, DARKPURPLE, LIME,
+        GOLD, RED, GREEN, BLUE, PURPLE, YELLOW, PINK // , WHITE
+    };
 
 // Here are hardcoded all the path for the fonts, this way they are defined
 // all in the same place so it's easier to update them for any reason
@@ -64,6 +73,50 @@ void DrawClockOverlay(Font font) {
     SetTextLineSpacing(35);
     DrawTextPro(font, timeBuf, posInt, origin, 0.0, fontSizeInternal, 20, colourInternal);
     DrawTextPro(font, dateBuf, pos2Int, origin, 0.0, fontSizeInternal, 25, colourInternal);
+}
+
+// generate a word from the messages and the passed font list, it gives a
+// random clour, size and spacing it uses the internal function to decide the word to print
+Word generateWord(FontSet *fontSet) {
+    Word asd;
+
+    asd.font    = fontSet->font[rand() % MAX_FONTS];
+    asd.msg     = generateMessage();
+    asd.pos.x   = (float)(rand() % (GetRenderWidth()));
+    asd.pos.y   = (float)(rand() % (GetRenderHeight()));
+    asd.angle   = (float)(rand() % 90) - 45.0f;
+    asd.size    = (float)((rand() % 400) + 20) / 10.0f;
+    asd.spacing = (float)(rand() % 7 + 1);
+    asd.col     = COLOURS[rand() % MAX_COLOURS];
+
+
+
+    return asd;
+}
+
+char *generateMessage() {
+    char *asd;
+
+    int val = rand() % 100;
+    if (val < 10) {
+        asd = "WEEE Open";
+    } else if (val == 11) {
+        asd = "LoL";
+    } else if (val == 12) {
+        asd = "FULL BRIDGE RECTIFIER";
+    } else if (val < 30 && (val % 3) == 0) {
+        asd = "Debian";
+    } else if (val < 30 && (val % 3) == 1) {
+        asd = "Arch BTW";
+    } else if (val < 30 && (val % 3) == 2) {
+        asd = "WEEEbian";
+    } else if (val < 35) {
+        asd = "MicroSlop";
+    } else {
+        asd = "asd";
+    }
+
+    return asd;
 }
 
 // It will unload all the fonts inside the `FontSet` passed by using the `UnloadFont`

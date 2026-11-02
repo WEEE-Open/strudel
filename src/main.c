@@ -3,10 +3,12 @@
 #include "raylib.h"
 #include "assets.h"
 
+
+const Vector2 ORIGIN = { 0, 0 };
+
 int main(void) {
 
-    // initialization of the window,
-    // afterwards we set an fps target and generate a random seed
+    // initialization of the window, set fps target and generate a random seed
     int width = 1280, height = 1024;
     InitWindow(width, height, "asdSaver");
     SetTargetFPS(60);
@@ -19,34 +21,18 @@ int main(void) {
 
     FontSet fontSet = LoadFontSet();
 
-    // loaded messages, the repetition of 'asd' is to make sure that it has a higher chance to appear
-    const char *messages[MAX_MESSAGES] = {
-        "ASD", "asd", "WEEEopen",
-        "lol", "Debian", "Arch",
-        "MaNgIaRo", "ASD", "asd",
-        "FULL BRIDGE RECTIFIER",
-        "MicroSLOP", "ASD", "asd"
-    };
-
     // loaded colours used, all aleady defined by raylib
-    Color colours[MAX_COLOURS] = {
-        MAROON, ORANGE, DARKGREEN, DARKBLUE, DARKPURPLE, LIME,
-        GOLD, RED, GREEN, BLUE, PURPLE, YELLOW, PINK // , WHITE
-    };
 
     // initialization of buffer for words and counter, time of the last drawn word and the counter origin point
     static Word history[MAX_HISTORY];
     int   historyCount = 0;
 
     double lastDraw  = GetTime();
-    Vector2 origin = { 0, 0 };
 
     HideCursor();
-    int xTimeInc = 0, yTimeInc = 0;
 
     // loop, it closes the windows if `Esc` or the close button is pressed
     while (!WindowShouldClose()) {
-
 
         // it generates a random time to wait before printing a new word, it goes from 0 to 2 sec
         // and then takes the new time time
@@ -58,14 +44,7 @@ int main(void) {
         if (now - lastDraw >= interval && historyCount < MAX_HISTORY) {
             lastDraw = now;
             Word asd;
-            asd.fontIdx = rand() % MAX_FONTS;
-            asd.msgIdx  = rand() % MAX_MESSAGES;
-            asd.pos.x   = (float)(rand() % (GetRenderWidth()));
-            asd.pos.y   = (float)(rand() % (GetRenderHeight()));
-            asd.angle   = (float)(rand() % 90) - 45.0f;
-            asd.size    = (float)((rand() % 400) + 20) / 10.0f;
-            asd.spacing = (float)(rand() % 7 + 1);
-            asd.col     = colours[rand() % MAX_COLOURS];
+            asd = generateWord(&fontSet);
             history[historyCount++] = asd;
         }
 
@@ -75,13 +54,11 @@ int main(void) {
 
             Rectangle src = {0, 0, (float)background.width, (float)background.height};
             Rectangle dst = {0, 0, (float)width, (float)height};
-            DrawTexturePro(background, src, dst, origin,0.0f, WHITE);
+            DrawTexturePro(background, src, dst, ORIGIN,0.0f, WHITE);
 
             for (int i = 0; i < historyCount; i++) {
                 Word *asd = &history[i];
-                DrawTextPro(fontSet.font[asd->fontIdx], messages[asd->msgIdx],
-                            asd->pos, origin, asd->angle, asd->size, asd->spacing, asd->col);
-
+                DrawTextPro(asd->font, asd->msg, asd->pos, ORIGIN, asd->angle, asd->size, asd->spacing, asd->col);
                 DrawClockOverlay(fontSet.font[6]);
             }
         EndDrawing();
@@ -93,7 +70,6 @@ int main(void) {
     }
 
     UnloadFontSet(&fontSet);
-
     UnloadImage(icon);
     UnloadImage(bg);
     CloseWindow();
