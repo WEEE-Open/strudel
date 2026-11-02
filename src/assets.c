@@ -89,8 +89,6 @@ Word generateWord(FontSet *fontSet) {
     asd.spacing = (float)(rand() % 7 + 1);
     asd.col     = COLOURS[rand() % MAX_COLOURS];
 
-
-
     return asd;
 }
 
@@ -98,23 +96,14 @@ char *generateMessage() {
     char *asd;
 
     int val = rand() % 100;
-    if (val < 10) {
-        asd = "WEEE Open";
-    } else if (val == 11) {
-        asd = "LoL";
-    } else if (val == 12) {
-        asd = "FULL BRIDGE RECTIFIER";
-    } else if (val < 30 && (val % 3) == 0) {
-        asd = "Debian";
-    } else if (val < 30 && (val % 3) == 1) {
-        asd = "Arch BTW";
-    } else if (val < 30 && (val % 3) == 2) {
-        asd = "WEEEbian";
-    } else if (val < 35) {
-        asd = "MicroSlop";
-    } else {
-        asd = "asd";
-    }
+    if (val < 10) { asd = "WEEE Open";}
+    else if (val == 11) {asd = "LoL";}
+    else if (val == 12) {asd = "FULL BRIDGE RECTIFIER";}
+    else if (val < 30 && (val % 3) == 0) {asd = "Debian";}
+    else if (val < 30 && (val % 3) == 1) {asd = "Arch BTW";}
+    else if (val < 30 && (val % 3) == 2) {asd = "WEEEbian";}
+    else if (val < 35) {asd = "MicroSlop";}
+    else {asd = "asd";}
 
     return asd;
 }
