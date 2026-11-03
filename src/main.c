@@ -1,12 +1,14 @@
 
-//#include <iterator>
+//#standard library installed on the machine + raylib
 #include <stdio.h>
 #include <stdlib.h>
-#include "raylib.h"
-#include "assets.h"
-
 #include <stdbool.h>
-#include"socket_wrapper.h"
+#include "raylib.h"
+
+// written modules
+#include "assets.h" // to write on the display
+#include "giffer.h" // to play the gif
+#include"socket_wrapper.h" // to communicate with the socket
 
 static bool ring_trigger = false;
 
@@ -30,12 +32,16 @@ int main(void) {
     Texture2D background = LoadTextureFromImage(bg);
     UnloadImage(bg);
 
+    // initialization of all the fonts and of the initial gif
     FontSet fontSet = LoadFontSet();
+    GifPlayer *reeeng = GifPlayerLoad("images/gifs/ne-scendere-ne-salire.gif");
+    if(reeeng) {
+        GifPlayerSetFrameTime(reeeng, 0.10f);
+        GifPlayerSetDuration(reeeng, 5.0);
+    }
 
     sio_client_handle *sock = sio_client_create("");
     sio_client_on_event(sock, "weeetofono", &ring_trigger);
-
-    // loaded colours used, all aleady defined by raylib
 
     // initialization of buffer for words and counter, time of the last drawn word and the counter origin point
     static Word history[MAX_HISTORY];
@@ -44,13 +50,12 @@ int main(void) {
     double lastDraw  = GetTime();
     double nextInterval = ((double)(rand()%29) + 1.0)/10;
 
+    bool test = 1;
     HideCursor();
 
     // loop, it closes the windows if `Esc` or the close button is pressed
     while (!WindowShouldClose()) {
 
-        // it generates a random time to wait before printing a new word, it goes from 0 to 2 sec
-        // and then takes the new time time
         double now = GetTime();
 
         // if there is still space in the buffer it creates a new word using random values
@@ -63,10 +68,12 @@ int main(void) {
             nextInterval = ((double) (rand() % 29) + 1.0) / 10;
         }
 
-        if (__atomic_exchange_n(&ring_trigger, false, __ATOMIC_SEQ_CST)) {
-
+        if (/*__atomic_exchange_n(&ring_trigger, false, __ATOMIC_SEQ_CST)*/ test) {
+            GifPlayerTriggerAt(reeeng, 38);
+            test = 0;
         }
 
+        GifPlayerUpdate(reeeng, GetFrameTime());
         // start to draw on a black screen the word with all the defined parameters
         BeginDrawing();
             ClearBackground(BLACK);
@@ -81,6 +88,8 @@ int main(void) {
             }
 
             DrawClockOverlay(fontSet.font[6]);
+
+            GifPlayerDraw(reeeng, (Rectangle){0, 0, (float) width, (float) height});
         EndDrawing();
 
         // in case we have filled the buffer, we set back the counter at 0 to restart and clean the screen
@@ -95,6 +104,7 @@ int main(void) {
     UnloadImage(icon);
     //UnloadImage(bg);
     UnloadTexture(background);
+    GifPlayerUnload(reeeng);
     CloseWindow();
     return 0;
 }
