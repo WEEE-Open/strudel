@@ -1,8 +1,14 @@
 
+//#include <iterator>
+#include <stdio.h>
 #include <stdlib.h>
 #include "raylib.h"
 #include "assets.h"
 
+#include <stdbool.h>
+#include"socket_wrapper.h"
+
+static bool ring_trigger = false;
 
 const Vector2 ORIGIN = { 0, 0 };
 
@@ -11,6 +17,10 @@ int main(void) {
     // initialization of the window, set fps target and generate a random seed
     int width = 1280, height = 1024;
     InitWindow(width, height, "asdSaver");
+    if (!IsWindowReady()) {
+        fprintf(stderr, "Failed to create a window...");
+        return 1;
+    }
     SetTargetFPS(60);
     srand((unsigned)GetTime());
 
@@ -18,8 +28,12 @@ int main(void) {
     Image bg = LoadImage("images/background.png");
     SetWindowIcon(icon);
     Texture2D background = LoadTextureFromImage(bg);
+    UnloadImage(bg);
 
     FontSet fontSet = LoadFontSet();
+
+    sio_client_handle *sock = sio_client_create("");
+    sio_client_on_event(sock, "weeetofono", &ring_trigger);
 
     // loaded colours used, all aleady defined by raylib
 
@@ -28,6 +42,7 @@ int main(void) {
     int   historyCount = 0;
 
     double lastDraw  = GetTime();
+    double nextInterval = ((double)(rand()%29) + 1.0)/10;
 
     HideCursor();
 
@@ -36,16 +51,20 @@ int main(void) {
 
         // it generates a random time to wait before printing a new word, it goes from 0 to 2 sec
         // and then takes the new time time
-        const double interval = ((double)(rand()%29) + 1.0)/10;
         double now = GetTime();
 
         // if there is still space in the buffer it creates a new word using random values
         // muduled on the max value of each field
-        if (now - lastDraw >= interval && historyCount < MAX_HISTORY) {
+        if (now - lastDraw >= nextInterval && historyCount < MAX_HISTORY) {
             lastDraw = now;
             Word asd;
             asd = generateWord(&fontSet);
             history[historyCount++] = asd;
+            nextInterval = ((double) (rand() % 29) + 1.0) / 10;
+        }
+
+        if (__atomic_exchange_n(&ring_trigger, false, __ATOMIC_SEQ_CST)) {
+
         }
 
         // start to draw on a black screen the word with all the defined parameters
@@ -59,8 +78,9 @@ int main(void) {
             for (int i = 0; i < historyCount; i++) {
                 Word *asd = &history[i];
                 DrawTextPro(asd->font, asd->msg, asd->pos, ORIGIN, asd->angle, asd->size, asd->spacing, asd->col);
-                DrawClockOverlay(fontSet.font[6]);
             }
+
+            DrawClockOverlay(fontSet.font[6]);
         EndDrawing();
 
         // in case we have filled the buffer, we set back the counter at 0 to restart and clean the screen
@@ -69,9 +89,12 @@ int main(void) {
         }
     }
 
+    sio_client_destroy(sock);
+
     UnloadFontSet(&fontSet);
     UnloadImage(icon);
-    UnloadImage(bg);
+    //UnloadImage(bg);
+    UnloadTexture(background);
     CloseWindow();
     return 0;
 }

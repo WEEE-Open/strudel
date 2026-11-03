@@ -1,5 +1,5 @@
-#ifndef _ASSETS_H
-#define _ASSETS_H
+#ifndef ASSETS_H
+#define ASSETS_H
 
     #include "raylib.h"
     #include <time.h>
@@ -14,13 +14,13 @@
     extern const Color COLOURS[MAX_COLOURS];
 
     typedef struct {
-        Font    font; // chosen font
-        char *  msg; // chosen message
-        Vector2 pos; // position
-        float   angle; // angle
-        float   size; // size of the font
-        float   spacing; // spacing of the font
-        Color   col; // colour of the font
+        Font         font; // chosen font
+        const char * msg; // chosen message
+        Vector2      pos; // position
+        float        angle; // angle
+        float        size; // size of the font
+        float        spacing; // spacing of the font
+        Color        col; // colour of the font
     } Word;
 
     typedef struct {
