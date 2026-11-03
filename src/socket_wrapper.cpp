@@ -28,10 +28,10 @@ sio_client_handle* sio_client_create(const char* url) {
     return handle;
 }
 
-void sio_client_on_event(sio_client_handle* handle, const char* event_name, atomic_bool *flag) {
+void sio_client_on_event(sio_client_handle* handle, const char* event_name, bool *flag) {
     if (!handle) return;
     handle->client.socket()->on(event_name, [flag](const sio::event&) {
-        if (flag) atomic_store(flag, true);   // runs on socket.io thread — atomic only
+        if (flag) __atomic_store_n(flag, true, __ATOMIC_SEQ_CST);   // runs on socket.io thread — atomic only
     });
 }
 
