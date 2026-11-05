@@ -8,7 +8,8 @@ SIO_DIR  = socket.io-client-cpp-3.1.0
 INCLUDES = -I$(SIO_DIR)/src \
            -I$(SIO_DIR)/lib/asio/asio/include \
            -I$(SIO_DIR)/lib/websocketpp \
-           -I$(SIO_DIR)/lib/rapidjson/include
+           -I$(SIO_DIR)/lib/rapidjson/include \
+		   -Iraylib-media/src
 
 # Required by socket.io-client-cpp when using its bundled deps
 DEFINES  = -DASIO_STANDALONE -D_WEBSOCKETPP_CPP11_STL_
@@ -18,7 +19,7 @@ CFLAGS   = -Wall -Wextra -O2 -std=c11   -MMD -MP $(INCLUDES) $(DEFINES)
 CXXFLAGS = -Wall -Wextra -O2 -std=c++17 -MMD -MP $(INCLUDES) $(DEFINES)
 
 LDFLAGS  = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
-LDLIBS   = -lstdc++ -lssl -lcrypto
+LDLIBS   = -lstdc++ -lssl -lcrypto -lavcodec -lavformat -lavutil -lswresample -lswscale
 
 TARGET   = build/main
 

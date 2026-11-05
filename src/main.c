@@ -1,9 +1,11 @@
-
-//#standard library installed on the machine + raylib
+//standard library installed on the machine + raylib
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include "raylib.h"
+
+// video library for raylib
+#include "raymedia.h"
 
 // written modules
 #include "assets.h" // to write on the display
@@ -35,6 +37,7 @@ int main(void) {
     // initialization of all the fonts and of the initial gif
     FontSet fontSet = LoadFontSet();
     GifPlayer *reeeng = GifPlayerLoad("images/gifs/ne-scendere-ne-salire.gif");
+    MediaStream mp4 = LoadMedia("video/hatsune-miku-afterglow.3840x2160.mp4");
     if(reeeng) {
         GifPlayerSetFrameTime(reeeng, 0.10f);
         GifPlayerSetDuration(reeeng, 5.0);
@@ -50,13 +53,14 @@ int main(void) {
     double lastDraw  = GetTime();
     double nextInterval = ((double)(rand()%29) + 1.0)/10;
 
-    bool test = 1;
+    bool test = 1, gif = 1;
     HideCursor();
 
     // loop, it closes the windows if `Esc` or the close button is pressed
     while (!WindowShouldClose()) {
 
         double now = GetTime();
+        UpdateMedia(&mp4);
 
         // if there is still space in the buffer it creates a new word using random values
         // muduled on the max value of each field
@@ -69,7 +73,10 @@ int main(void) {
         }
 
         if (/*__atomic_exchange_n(&ring_trigger, false, __ATOMIC_SEQ_CST)*/ test) {
-            GifPlayerTriggerAt(reeeng, 38);
+            if (gif) {
+                GifPlayerTriggerAt(reeeng, 38);
+            } //else {
+                //}
             test = 0;
         }
 
@@ -92,6 +99,8 @@ int main(void) {
             GifPlayerDraw(reeeng, (Rectangle){0, 0, (float) width, (float) height});
         EndDrawing();
 
+
+                DrawTexture(mp4.videoTexture, 0, 0, WHITE);
         // in case we have filled the buffer, we set back the counter at 0 to restart and clean the screen
         if (historyCount == MAX_HISTORY) {
             historyCount = 0;
@@ -102,7 +111,7 @@ int main(void) {
 
     UnloadFontSet(&fontSet);
     UnloadImage(icon);
-    //UnloadImage(bg);
+    UnloadMedia(&mp4);
     UnloadTexture(background);
     GifPlayerUnload(reeeng);
     CloseWindow();
