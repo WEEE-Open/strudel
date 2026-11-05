@@ -25,6 +25,7 @@ static const char *FONT_PATHS[MAX_FONTS] = {
     "resources/DotGothic16-Regular.ttf",
     "resources/KAISG.ttf",
     "resources/Papyrus.ttf",
+    "resources/MartianMono_Condensed-ExtraBold.ttf",
 };
 
 // Function to load all the above specified fonts, it will load all of them in a

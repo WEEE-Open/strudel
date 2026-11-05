@@ -5,7 +5,7 @@
     #include <time.h>
 
     // constants used to define the number of fonts, colours, messages displayed and max number of elements on the screen
-    #define MAX_FONTS    12
+    #define MAX_FONTS    13
     #define MAX_COLOURS  14
     #define MAX_MESSAGES 13
     #define MAX_HISTORY  3000
